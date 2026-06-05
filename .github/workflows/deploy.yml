@@ -1,0 +1,26 @@
+name: Build, Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Questo abilita il pulsante per l'avvio manuale
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run build and tests
+        run: echo "Running your build and tests..."
+
+  manual_deploy_render:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' # Esegue solo se attivato manualmente
+    steps:
+      - name: Trigger Render deployment
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
